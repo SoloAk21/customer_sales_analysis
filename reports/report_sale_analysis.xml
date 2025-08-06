@@ -4,49 +4,94 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="partner">
                 <t t-call="web.external_layout">
-                    <div class="page">
-                        <h2>Sales Analysis for <t t-esc="partner.name"/></h2>
-                        <p>Total Sales: <span t-esc="total_sales" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/></p>
-                        <h3>Products Purchased</h3>
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-if="report_lines">
-                                    <t t-foreach="report_lines" t-as="line">
+                    <div class="page" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333;">
+                        <!-- Header Section -->
+                        <div style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                            <h2 style="color: #2E6DA4; margin-bottom: 5px;">Sales Analysis Report</h2>
+                            <h3 style="color: #337AB7; margin-top: 0;">Customer: <t t-esc="partner.name"/></h3>
+                            <div style="background-color: #F5F5F5; padding: 10px; border-radius: 4px;">
+                                <strong>Total Sales:</strong> 
+                                <span t-esc="total_sales" 
+                                      t-options="{'widget': 'monetary', 'display_currency': currency_id}"
+                                      style="font-size: 1.2em; font-weight: bold; color: #5CB85C;"/>
+                            </div>
+                        </div>
+
+                        <!-- Products Purchased Section -->
+                        <h3 style="color: #2E6DA4; margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid #eee;">Products Purchased</h3>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                                <thead>
+                                    <tr style="background-color: #2E6DA4; color: white;">
+                                        <th style="padding: 10px; text-align: left; width: 20%;">Category</th>
+                                        <th style="padding: 10px; text-align: left; width: 40%;">Product</th>
+                                        <th style="padding: 10px; text-align: right; width: 15%;">Quantity</th>
+                                        <th style="padding: 10px; text-align: right; width: 25%;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="report_lines">
+                                        <t t-foreach="report_lines" t-as="line">
+                                            <!-- Category Row -->
+                                            <tr style="background-color: #F9F9F9;">
+                                                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">
+                                                    <t t-esc="line['category']"/>
+                                                </td>
+                                                <td colspan="3" style="padding: 0; border-bottom: 1px solid #ddd;">
+                                                    <!-- Products Sub-table -->
+                                                    <table style="width: 100%; border-collapse: collapse;">
+                                                        <t t-foreach="line['products']" t-as="product">
+                                                            <tr>
+                                                                <td style="padding: 8px 10px; width: 40%; border-bottom: 1px solid #eee;">
+                                                                    <t t-esc="product['name']"/>
+                                                                </td>
+                                                                <td style="padding: 8px 10px; width: 15%; text-align: right; border-bottom: 1px solid #eee;">
+                                                                    <t t-esc="product['quantity']"/>
+                                                                </td>
+                                                                <td style="padding: 8px 10px; width: 25%; text-align: right; border-bottom: 1px solid #eee;">
+                                                                    <span t-esc="product['total']" 
+                                                                          t-options="{'widget': 'monetary', 'display_currency': currency_id}"
+                                                                          style="color: #5CB85C;"/>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <!-- Category Total Row -->
+                                            <tr style="background-color: #F0F7FF;">
+                                                <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">
+                                                    Category Total:
+                                                </td>
+                                                <td style="padding: 10px; text-align: right; font-weight: bold;">
+                                                    <span t-esc="line['category_total']" 
+                                                          t-options="{'widget': 'monetary', 'display_currency': currency_id}"
+                                                          style="color: #2E6DA4;"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
                                         <tr>
-                                            <td><t t-esc="line['category']"/></td>
-                                            <td colspan="3">
-                                                <table class="table table-sm">
-                                                    <t t-foreach="line['products']" t-as="product">
-                                                        <tr>
-                                                            <td><t t-esc="product['name']"/></td>
-                                                            <td><t t-esc="product['quantity']"/></td>
-                                                            <td><span t-esc="product['total']" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/></td>
-                                                        </tr>
-                                                    </t>
-                                                </table>
+                                            <td colspan="4" style="padding: 20px; text-align: center; color: #999;">
+                                                No sales data available for this customer.
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="3"><strong>Category Total</strong></td>
-                                            <td><span t-esc="line['category_total']" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/></td>
-                                        </tr>
                                     </t>
-                                </t>
-                                <t t-else="">
-                                    <tr>
-                                        <td colspan="4">No sales data available for this customer.</td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Summary Section -->
+                        <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <div style="background-color: #F5F5F5; padding: 15px; border-radius: 4px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="font-weight: bold; color: #333;">Report Generated:</div>
+                                    <div><t t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M')"/></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </t>
             </t>
